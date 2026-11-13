@@ -1,0 +1,19 @@
+import { Search, Plus, ChevronRight, ArrowLeft, Inbox, ArrowUpRight, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import type { ReactNode } from 'react';
+import { Button } from './button';
+import { normalized } from '../../lib/utils';
+export function Badge({children}:{children:ReactNode}) { const s=String(children);const tone=['Disponível','Concluída','Concluído'].includes(s)?'green':['Ocupado','Ativa','Ativo'].includes(s)?'blue':['Aguardando limpeza','PJ'].includes(s)?'amber':s==='Cancelada'||s==='Cancelado'?'red':'gray'; return <span className={`badge badge-${tone}`}><span/>{children}</span>; }
+export function PageHeader({title,description,action,label,children}:{title:string;description:string;action?:string;label?:string;children?:ReactNode}) {return <div className="page-heading"><div><h1>{title}</h1><p>{description}</p></div><div className="heading-actions">{children}{action&&<Button asChild><Link to={action}><Plus size={17}/>{label || 'Cadastrar'}</Link></Button>}</div></div>}
+export function Breadcrumb({items}:{items:{label:string;to?:string}[]}) {return <nav aria-label="Navegação estrutural" className="breadcrumb"><Link to="/">Início</Link>{items.map((x,i)=><span key={i}><ChevronRight size={13}/>{x.to?<Link to={x.to}>{x.label}</Link>:x.label}</span>)}</nav>}
+export function SearchInput({value,onChange,placeholder='Pesquisar...'}:{value:string;onChange:(v:string)=>void;placeholder?:string}) {return <div className="search-input"><Search size={17}/><input aria-label={placeholder} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>{value&&<button onClick={()=>onChange('')} aria-label="Limpar pesquisa"><X size={14}/></button>}</div>}
+export function Empty({text='Nenhum registro encontrado.',action}:{text?:string;action?:ReactNode}) {return <div className="empty"><Inbox size={32}/><h3>{text}</h3><p>Altere os filtros ou cadastre um novo registro para começar.</p>{action}</div>}
+export function Field({label,children,hint,full=false}:{label:string;children:ReactNode;hint?:string;full?:boolean}) {return <label className={`field ${full?'field-full':''}`}><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>}
+export function Info({label,children}:{label:string;children:ReactNode}) {return <div className="info-item"><span>{label}</span><strong>{children || 'Não informado'}</strong></div>}
+export function BackButton(){const nav=useNavigate();return <Button variant="ghost" onClick={()=>nav(-1)}><ArrowLeft size={16}/>Voltar</Button>}
+export function Card({title,subtitle,children,action,className=''}:{title?:string;subtitle?:string;children:ReactNode;action?:ReactNode;className?:string}) {return <section className={`card ${className}`}>{title&&<div className="card-heading"><div><h2>{title}</h2>{subtitle&&<p>{subtitle}</p>}</div>{action}</div>}{children}</section>}
+export function Table({headers,children,empty=false}:{headers:string[];children:ReactNode;empty?:boolean}) {return <div className="table-scroll"><table><thead><tr>{headers.map(h=><th key={h}>{h}</th>)}</tr></thead><tbody>{children}</tbody></table>{empty&&<Empty/>}</div>}
+export function TextLink({to,children}:{to:string;children:ReactNode}) {return <Link className="text-link" to={to}>{children}<ArrowUpRight size={14}/></Link>}
+export const matches=(query:string,...values:(string|undefined)[])=>normalized(values.join(' ')).includes(normalized(query));
+export function Avatar({name,small=false}:{name:string;small?:boolean}) {return <span className={`avatar ${small?'avatar-sm':''}`}>{name.split(' ').slice(0,2).map(x=>x[0]).join('')}</span>}
+export function NotFound(){return <><PageHeader title="Registro não encontrado" description="Este registro pode ter sido removido da demonstração."/><Button asChild><Link to="/">Voltar ao dashboard</Link></Button></>}

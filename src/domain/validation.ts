@@ -1,0 +1,11 @@
+import { z } from 'zod';
+const required=z.string().trim().min(1,'Campo obrigatório.');
+const email=z.string().trim().email('Informe um e-mail válido.').or(z.literal(''));
+export const roomSchema=z.object({number:required,capacity:z.coerce.number().int('Informe um número inteiro.').min(1,'A capacidade deve ser positiva.'),password:z.string()});
+export const guestSchema=z.object({name:required.min(3,'Informe o nome completo.'),nationality:required,document:required.min(5,'Informe um documento válido para demonstração.'),issuer:required,phone:required,email,city:required,state:z.string(),address:z.string(),birthday:z.string()});
+export const companySchema=z.object({name:required.min(3,'Informe a razão social.'),document:required.min(5,'Informe um CNPJ ou identificador de demonstração.'),tradeName:z.string(),phone:z.string(),email});
+export const staySchema=z.object({roomId:required,start:required,end:required}).refine(v=>v.end>v.start,{message:'A saída deve ser posterior ao início.',path:['end']});
+export const checkinSchema=z.object({stayId:required,guestId:required,modality:z.enum(['PF','PJ']),companyId:z.string(),entry:required,notes:z.string()}).refine(v=>v.modality!=='PJ'||v.companyId.length>0,{message:'Selecione a empresa.',path:['companyId']});
+export const checkoutSchema=z.object({checkinId:required,exit:required,notes:z.string()});
+export const templateSchema=z.object({name:required,content:required});
+export const settingsSchema=z.object({name:required,wifi:required,password:required,info:z.string()});
